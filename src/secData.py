@@ -27,6 +27,7 @@ def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
     form_lists = []
     filings = json_data["filings"]
     recent_filings = filings["recent"]
+    quarter_val = 3
     for acc_num, form_name, filing_date, report_date in zip(
         recent_filings["accessionNumber"],
         recent_filings["form"],
@@ -34,6 +35,9 @@ def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
         recent_filings["reportDate"],
     ):
         if form_name in forms and filing_date.startswith(str(year)):
+            if form_name=='10-Q':
+                form_name+=quarter_val
+                quarter_val-=1
             no_dashes_acc_num = re.sub("-", "", acc_num)
             form_lists.append([no_dashes_acc_num, form_name, filing_date, report_date])
 
