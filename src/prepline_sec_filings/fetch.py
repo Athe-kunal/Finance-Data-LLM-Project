@@ -23,7 +23,7 @@ SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions"
 
 
 def get_filing(
-    accession_number: Union[str, int],cik: Union[str, int],  company: str, email: str
+    accession_number: Union[str, int], cik: Union[str, int], company: str, email: str
 ) -> str:
     """Fetches the specified filing from the SEC EDGAR Archives. Conforms to the rate
     limits specified on the SEC website.
@@ -42,8 +42,8 @@ def _get_filing(
     # headers = {
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     # }
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    response = session.get(url,headers=headers)
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = session.get(url, headers=headers)
     response.raise_for_status()
     return response.text
 
@@ -55,9 +55,9 @@ def get_cik_by_ticker(ticker: str) -> str:
     cik_re = re.compile(r".*CIK=(\d{10}).*")
     url = _search_url(ticker)
     headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
-    response = requests.get(url, stream=True,headers=headers)
+    response = requests.get(url, stream=True, headers=headers)
     response.raise_for_status()
     results = cik_re.findall(response.text)
     return str(results[0])

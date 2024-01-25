@@ -2,7 +2,6 @@ from typing import List
 import asyncio
 import aiohttp
 from collections import defaultdict
-from utils import get_filing_urls_to_download
 from prepline_sec_filings.sections import (
     section_string_to_enum,
     validate_section_names,
@@ -87,11 +86,7 @@ def get_regex_enum(section_regex):
 
 
 class SECExtractor:
-    def __init__(
-        self,
-        ticker:str,
-        sections:List[str]= ['_ALL']
-    ):
+    def __init__(self, ticker: str, sections: List[str] = ["_ALL"]):
         """_summary_
 
         Args:
@@ -102,7 +97,7 @@ class SECExtractor:
             end_date (str, optional): end date of getting files. Defaults to DEFAULT_BEFORE_DATE.
             sections (List[str], optional): sections required, check sections names. Defaults to ["_ALL"].
         """
-        
+
         self.ticker = ticker
         self.sections = sections
 
@@ -143,7 +138,6 @@ class SECExtractor:
                     all_texts.append(val)
         return " ".join(all_texts)
 
-    
     def get_section_texts_from_text(self, text):
         """Get the text from filing document URL
 
@@ -221,7 +215,7 @@ class SECExtractor:
         ref: https://www.sec.gov/os/accessing-edgar-data"""
         session = self._get_session(company, email)
         headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         }
         response = session.get(url)
         response.raise_for_status()
