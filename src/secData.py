@@ -36,7 +36,7 @@ def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
     ):
         if form_name in forms and filing_date.startswith(str(year)):
             if form_name=='10-Q':
-                form_name+=quarter_val
+                form_name+=str(quarter_val)
                 quarter_val-=1
             no_dashes_acc_num = re.sub("-", "", acc_num)
             form_lists.append([no_dashes_acc_num, form_name, filing_date, report_date])
