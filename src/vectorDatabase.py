@@ -53,12 +53,12 @@ def get_earnings_all_quarters_data(docs, quarter: str, ticker: str, year: int):
         end_range = ranges[idx + 1][0]
         speaker_text = content[start_range + 1 : end_range]
 
-        docs.append(Document(page_content=speaker_text, metadata={"speaker": speaker}))
+        docs.append(Document(page_content=speaker_text, metadata={"speaker": speaker,"quarter":quarter}))
 
     docs.append(
         Document(
             page_content=content[ranges[-1][1] :],
-            metadata={"speaker": speakers_list[-1]},
+            metadata={"speaker": speakers_list[-1],"quarter":quarter},
         )
     )
     return docs
@@ -146,7 +146,7 @@ def create_database(ticker: str, year: int):
     return qdrant_client, encoder
 
 
-def query_database_earnings_call(question: str, qdrant_client, encoder, speakers_list):
+def query_database_earnings_call(question: str, quarter:str, qdrant_client, encoder, speakers_list):
     req_speaker_list = []
     for sl in speakers_list:
         if sl in question:
@@ -158,15 +158,27 @@ def query_database_earnings_call(question: str, qdrant_client, encoder, speakers
     hits = qdrant_client.search(
         collection_name=COLLECTION_NAME,
         query_vector=encoder.encode(question).tolist(),
-        limit=RETURN_LIMIT,
+        limit=EARNINGS_CALL_RETURN_LIMIT,
+        # query_filter=models.Filter(
+        #     must=[
+        #         models.FieldCondition(
+        #             key="speaker",
+        #             match=models.MatchAny(
+        #                 any=req_speaker_list,
+        #             ),
+        #         )
+        #     ]
+        # ),
         query_filter=models.Filter(
-            must=[
-                models.FieldCondition(
-                    key="speaker",
-                    match=models.MatchAny(
-                        any=req_speaker_list,
-                    ),
-                )
+        must=[
+            models.FieldCondition(
+                key="speaker",
+                match=models.MatchAny(any=req_speaker_list),
+            ),
+            models.FieldCondition(
+                key="quarter",
+                match=models.MatchValue(value=quarter),
+                ),
             ]
         ),
         search_params=models.SearchParams(hnsw_ef=256, exact=True),
@@ -184,7 +196,7 @@ def query_database_earnings_call(question: str, qdrant_client, encoder, speakers
 
     relevant_speaker_dict = {k: "" for k in relevant_docs_speaker_list}
     for rd in relevant_docs:
-        relevant_speaker_dict[rd["speaker"]] += rd["speaker_text"]
+        relevant_speaker_dict[rd["speaker"]] += rd["text"]
 
     relevant_speaker_text = ""
     for speaker, text in relevant_speaker_dict.items():
@@ -192,3 +204,41 @@ def query_database_earnings_call(question: str, qdrant_client, encoder, speakers
         relevant_speaker_text += text + "\n\n"
 
     return relevant_speaker_text
+
+def query_database_sec(question: str, qdrant_client, encoder, search_form: str):
+
+    assert search_form in ["10-K","10-Q1","10-Q2","10-Q3"], f'The search form type should be in ["10-K","10-Q1","10-Q2","10-Q3"]'
+
+    hits = qdrant_client.search(
+        collection_name=COLLECTION_NAME,
+        query_vector=encoder.encode(question).tolist(),
+        limit=SEC_DOCS_RETURN_LIMIT,
+        query_filter=models.Filter(
+        must=[
+            models.FieldCondition(
+                key="filing_type",
+                match=models.MatchValue(value=search_form),
+            )
+            ]
+        ),
+        search_params=models.SearchParams(hnsw_ef=256, exact=True),
+        )
+
+    releavnt_docs = [hit.payload for hit in hits]
+
+    section_text_dict = {}
+
+    for rd in releavnt_docs:
+        section_name = rd['section_name']
+        section_text_dict[section_name]+= rd["text"] + '. '
+    relevant_docs_sentences = ""
+    rag_sentence_docs_sentences = ""
+    
+    for sec_name,section_text in section_text_dict.items():
+        relevant_docs_sentences+=sec_name+": "
+        relevant_docs_sentences+=section_text
+        relevant_docs_sentences+="\n\n"
+        rag_sentence_docs_sentences+=section_text
+        rag_sentence_docs_sentences+="\n\n"
+
+    return rag_sentence_docs_sentences,relevant_docs_sentences
