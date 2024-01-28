@@ -61,7 +61,7 @@ def get_earnings_all_quarters_data(docs, quarter: str, ticker: str, year: int):
             metadata={"speaker": speakers_list[-1],"quarter":quarter},
         )
     )
-    return docs
+    return docs, speakers_list
 
 
 def create_database(ticker: str, year: int):
@@ -75,11 +75,11 @@ def create_database(ticker: str, year: int):
 
     docs = []
     print("Earnings Call Q1")
-    docs = get_earnings_all_quarters_data(docs, "Q1", ticker, year)
+    docs,speakers_list_1 = get_earnings_all_quarters_data(docs, "Q1", ticker, year)
     print("Earnings Call Q2")
-    docs = get_earnings_all_quarters_data(docs, "Q2", ticker, year)
+    docs,speakers_list_2 = get_earnings_all_quarters_data(docs, "Q2", ticker, year)
     print("Earnings Call Q3")
-    docs = get_earnings_all_quarters_data(docs, "Q3", ticker, year)
+    docs,speakers_list_3 = get_earnings_all_quarters_data(docs, "Q3", ticker, year)
 
     print("SEC")
     section_texts = sec_main(ticker, year)
@@ -143,7 +143,7 @@ def create_database(ticker: str, year: int):
         ],
     )
 
-    return qdrant_client, encoder
+    return qdrant_client, encoder, speakers_list_1, speakers_list_2, speakers_list_3
 
 
 def query_database_earnings_call(question: str, quarter:str, qdrant_client, encoder, speakers_list):
@@ -241,4 +241,4 @@ def query_database_sec(question: str, qdrant_client, encoder, search_form: str):
         rag_sentence_docs_sentences+=section_text
         rag_sentence_docs_sentences+="\n\n"
 
-    return rag_sentence_docs_sentences,relevant_docs_sentences
+    return rag_sentence_docs_sentences, relevant_docs_sentences
