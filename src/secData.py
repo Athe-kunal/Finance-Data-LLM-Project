@@ -5,12 +5,21 @@ import concurrent.futures
 from functools import partial
 from prepline_sec_filings.fetch import get_cik_by_ticker
 import requests
-from prepline_sec_filings.fetch import get_filing
+from llama_hub.sec_filings.prepline_sec_filings.fetch import get_filing
 
 
-def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
+def sec_main(
+    ticker: str, year: str, filing_types: List[str] = ["10-K", "10-Q"], include_amends=True
+):
     cik = get_cik_by_ticker(ticker)
     rgld_cik = int(cik.strip("0"))
+
+    forms = []
+    if include_amends:
+        for ft in filing_types:
+            forms.append(ft)
+            forms.append(ft+"/A")
+
     url = f"https://data.sec.gov/submissions/CIK{cik}.json"
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -35,13 +44,13 @@ def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
         recent_filings["reportDate"],
     ):
         if form_name in forms and filing_date.startswith(str(year)):
-            if form_name=='10-Q':
-                form_name+=str(quarter_val)
-                quarter_val-=1
+            if form_name == "10-Q":
+                form_name += str(quarter_val)
+                quarter_val -= 1
             no_dashes_acc_num = re.sub("-", "", acc_num)
             form_lists.append([no_dashes_acc_num, form_name, filing_date, report_date])
 
-    acc_nums_list = [l[0] for l in form_lists]
+    acc_nums_list = [fl[0] for fl in form_lists]
 
     get_filing_partial = partial(
         get_filing,
@@ -51,7 +60,7 @@ def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
     )
 
     sec_extractor = SECExtractor(ticker=ticker)
-
+    print("Started Scraping")
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
         results = executor.map(get_filing_partial, acc_nums_list)
     results_texts = []
@@ -60,7 +69,8 @@ def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
     assert len(results_texts) == len(
         acc_nums_list
     ), f"The scraped text {len(results_texts)} is not matching with accession number texts {len(acc_nums_list)}"
-
+    print("Scraped")
+    print("Started Extracting")
     with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
         results = executor.map(sec_extractor.get_section_texts_from_text, results_texts)
     section_texts = []
@@ -70,6 +80,7 @@ def sec_main(ticker: str, year: str, forms: List[str] = ["10-K", "10-Q"]):
         acc_nums_list
     ), f"The section text {len(section_texts)} is not matching with accession number texts {len(acc_nums_list)}"
 
+    print("Extracted")
     for idx, val in enumerate(form_lists):
         val.append(section_texts[idx])
     return form_lists
