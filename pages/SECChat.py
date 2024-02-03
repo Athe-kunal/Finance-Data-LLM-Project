@@ -14,8 +14,13 @@ openai.api_key = os.environ['OPENAI_API_KEY']
 qdrant_client = st.session_state['qdrant_client']
 encoder = st.session_state['encoder']
 
-def generate_response(input_text,form:str):
-
+form_name = st.selectbox(
+    "Form Name",
+    ("10-K","10-Q1","10-Q2","10-Q3")
+)
+st.session_state['form_name'] = form_name
+def generate_response(input_text):
+    form = st.session_state['form_name']
     relevant_text = query_database_sec(input_text,qdrant_client,encoder,search_form=form)
     res = get_openai_answer_sec(input_text,relevant_text)
 

@@ -18,8 +18,15 @@ speaker_list_1 = st.session_state['speaker_list_1']
 speakers_list_2 = st.session_state['speaker_list_2']
 speakers_list_3 = st.session_state['speaker_list_3']
 
-def generate_response(input_text,quarter:str):
+quarter = st.selectbox(
+    "Quarter Name",
+    ("Q1","Q2","Q3")
+)
 
+st.session_state['quarter'] = quarter
+
+def generate_response(input_text):
+    quarter = st.session_state['quarter']
     if quarter == "Q1":
         speakers_list = speaker_list_1
     elif quarter == "Q2":
