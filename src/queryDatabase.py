@@ -8,7 +8,7 @@ from qdrant_client.models import (
     Filter,
     Match,
 )
-from config import *
+from src.config import *
 from collections import defaultdict
 
 def query_database_earnings_call(question: str, quarter:str, qdrant_client, encoder, speakers_list):

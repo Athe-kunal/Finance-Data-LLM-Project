@@ -1,11 +1,11 @@
 from typing import List
 import re
-from sec_filings import SECExtractor
+from src.sec_filings import SECExtractor
 import concurrent.futures
 from functools import partial
-from prepline_sec_filings.fetch import get_cik_by_ticker
+from src.prepline_sec_filings.fetch import get_cik_by_ticker
 import requests
-from llama_hub.sec_filings.prepline_sec_filings.fetch import get_filing
+from src.prepline_sec_filings.fetch import get_filing
 
 
 def sec_main(

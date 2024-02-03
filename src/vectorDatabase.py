@@ -1,7 +1,7 @@
-from utils import get_earnings_transcript
+from src.utils import get_earnings_transcript
 import re
 from langchain.schema import Document
-from config import *
+from src.config import *
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance
@@ -21,7 +21,7 @@ from qdrant_client.models import (
     Filter,
     Match,
 )
-from secData import sec_main
+from src.secData import sec_main
 
 
 def clean_speakers(speaker):
