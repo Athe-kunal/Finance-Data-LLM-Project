@@ -1,5 +1,5 @@
 from src.chat_earnings_call import get_openai_answer_earnings_call
-from src.vectorDatabase import query_database_earnings_call
+from src.queryDatabase import query_database_earnings_call
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -18,16 +18,16 @@ speaker_list_1 = st.session_state['speaker_list_1']
 speakers_list_2 = st.session_state['speaker_list_2']
 speakers_list_3 = st.session_state['speaker_list_3']
 
-def generate_response(input_text,quarters:str):
+def generate_response(input_text,quarter:str):
 
-    if quarters == "Q1":
+    if quarter == "Q1":
         speakers_list = speaker_list_1
-    elif quarters == "Q2":
+    elif quarter == "Q2":
         speakers_list = speakers_list_2
-    elif quarters == "Q3":
+    elif quarter == "Q3":
         speakers_list = speakers_list_3
 
-    relevant_text = query_database_earnings_call(input_text,qdrant_client,encoder,speakers_list)
+    relevant_text = query_database_earnings_call(input_text,quarter,qdrant_client,encoder,speakers_list)
     res = get_openai_answer_earnings_call(input_text,relevant_text)
 
     return res, relevant_text

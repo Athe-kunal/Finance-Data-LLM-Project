@@ -1,7 +1,7 @@
 from langchain.prompts import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 
-def get_openai_answer(question,context):
+def get_openai_answer_sec(question,context):
     sec_prompt_template = """Use the following pieces of context which has section name followed by text separated by semi-colon, to answer the question at the end.\n
         Answer the question by citing the relevant section name. Be very diligent in using all the information and answering extensively. Also, don't miss out any numerical figures if there are any.\n
 
