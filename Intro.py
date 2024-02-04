@@ -5,7 +5,7 @@ ticker = st.text_input(label="Ticker")
 year = st.text_input(label="Year")
 
 if year!="":
-    int_year = float(year)
+    int_year = int(float(year))
 
 if ticker!="" and  year!="":
     qdrant_client,encoder,speakers_list_1, speakers_list_2, speakers_list_3 = create_database(ticker=ticker,year=int_year)

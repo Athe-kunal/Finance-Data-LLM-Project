@@ -1,4 +1,4 @@
-from vectorDatabase import create_database
+from src.vectorDatabase import create_database
 
 
 if __name__ == '__main__':

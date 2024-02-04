@@ -24,7 +24,6 @@ def sec_main(
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
-
     # Send a GET request to the URL with headers
     response = requests.get(url, headers=headers)
 
@@ -49,9 +48,7 @@ def sec_main(
                 quarter_val -= 1
             no_dashes_acc_num = re.sub("-", "", acc_num)
             form_lists.append([no_dashes_acc_num, form_name, filing_date, report_date])
-
     acc_nums_list = [fl[0] for fl in form_lists]
-
     get_filing_partial = partial(
         get_filing,
         cik=rgld_cik,
