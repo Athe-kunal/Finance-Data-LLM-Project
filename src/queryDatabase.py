@@ -11,7 +11,10 @@ from qdrant_client.models import (
 from src.config import *
 from collections import defaultdict
 
-def query_database_earnings_call(question: str, quarter:str, qdrant_client, encoder, speakers_list):
+
+def query_database_earnings_call(
+    question: str, quarter: str, qdrant_client, encoder, speakers_list
+):
     req_speaker_list = []
     for sl in speakers_list:
         if sl in question:
@@ -35,14 +38,14 @@ def query_database_earnings_call(question: str, quarter:str, qdrant_client, enco
         #     ]
         # ),
         query_filter=models.Filter(
-        must=[
-            models.FieldCondition(
-                key="speaker",
-                match=models.MatchAny(any=req_speaker_list),
-            ),
-            models.FieldCondition(
-                key="quarter",
-                match=models.MatchValue(value=quarter),
+            must=[
+                models.FieldCondition(
+                    key="speaker",
+                    match=models.MatchAny(any=req_speaker_list),
+                ),
+                models.FieldCondition(
+                    key="quarter",
+                    match=models.MatchValue(value=quarter),
                 ),
             ]
         ),
@@ -70,39 +73,45 @@ def query_database_earnings_call(question: str, quarter:str, qdrant_client, enco
 
     return relevant_speaker_text
 
-def query_database_sec(question: str, qdrant_client, encoder, search_form: str):
 
-    assert search_form in ["10-K","10-Q1","10-Q2","10-Q3"], f'The search form type should be in ["10-K","10-Q1","10-Q2","10-Q3"]'
+def query_database_sec(question: str, qdrant_client, encoder, search_form: str):
+    assert search_form in [
+        "10-K",
+        "10-Q1",
+        "10-Q2",
+        "10-Q3",
+    ], f'The search form type should be in ["10-K","10-Q1","10-Q2","10-Q3"]'
 
     hits = qdrant_client.search(
         collection_name=COLLECTION_NAME,
         query_vector=encoder.encode(question).tolist(),
         limit=SEC_DOCS_RETURN_LIMIT,
         query_filter=models.Filter(
-        must=[
-            models.FieldCondition(
-                key="filing_type",
-                match=models.MatchValue(value=search_form),
-            )
+            must=[
+                models.FieldCondition(
+                    key="filing_type",
+                    match=models.MatchValue(value=search_form),
+                )
             ]
         ),
         search_params=models.SearchParams(hnsw_ef=256, exact=True),
-        )
+    )
 
     relevant_docs = [hit.payload for hit in hits]
 
     section_text_dict = defaultdict()
-    
+
     for rd in relevant_docs:
-        section_name = rd['sectionName']
-        if section_name not in section_text_dict: section_text_dict[section_name] = ""
-        section_text_dict[section_name]+= rd["text"] + '. '
-    
+        section_name = rd["sectionName"]
+        if section_name not in section_text_dict:
+            section_text_dict[section_name] = ""
+        section_text_dict[section_name] += rd["text"] + ". "
+
     relevant_docs_sentences = ""
-    
-    for sec_name,section_text in section_text_dict.items():
-        relevant_docs_sentences+=sec_name+": "
-        relevant_docs_sentences+=section_text
-        relevant_docs_sentences+="\n\n"
+
+    for sec_name, section_text in section_text_dict.items():
+        relevant_docs_sentences += sec_name + ": "
+        relevant_docs_sentences += section_text
+        relevant_docs_sentences += "\n\n"
 
     return relevant_docs_sentences

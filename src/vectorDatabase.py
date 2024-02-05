@@ -22,6 +22,7 @@ from qdrant_client.models import (
     Match,
 )
 from src.secData import sec_main
+from tenacity import RetryError
 
 
 def clean_speakers(speaker):
@@ -53,12 +54,17 @@ def get_earnings_all_quarters_data(docs, quarter: str, ticker: str, year: int):
         end_range = ranges[idx + 1][0]
         speaker_text = content[start_range + 1 : end_range]
 
-        docs.append(Document(page_content=speaker_text, metadata={"speaker": speaker,"quarter":quarter}))
+        docs.append(
+            Document(
+                page_content=speaker_text,
+                metadata={"speaker": speaker, "quarter": quarter},
+            )
+        )
 
     docs.append(
         Document(
             page_content=content[ranges[-1][1] :],
-            metadata={"speaker": speakers_list[-1],"quarter":quarter},
+            metadata={"speaker": speakers_list[-1], "quarter": quarter},
         )
     )
     return docs, speakers_list
@@ -74,15 +80,32 @@ def create_database(ticker: str, year: int):
     """
 
     docs = []
+    earnings_call_quarter_vals = []
     print("Earnings Call Q1")
-    docs,speakers_list_1 = get_earnings_all_quarters_data(docs, "Q1", ticker, year)
+    try:
+        docs, speakers_list_1 = get_earnings_all_quarters_data(docs, "Q1", ticker, year)
+        earnings_call_quarter_vals.append("Q1")
+    except RetryError:
+        print(f"Don't have the data for Q1")
+        speakers_list_1 = []
+
     print("Earnings Call Q2")
-    docs,speakers_list_2 = get_earnings_all_quarters_data(docs, "Q2", ticker, year)
+    try:
+        docs, speakers_list_2 = get_earnings_all_quarters_data(docs, "Q2", ticker, year)
+        earnings_call_quarter_vals.append("Q2")
+    except RetryError:
+        print(f"Don't have the data for Q2")
+        speakers_list_2 = []
     print("Earnings Call Q3")
-    docs,speakers_list_3 = get_earnings_all_quarters_data(docs, "Q3", ticker, year)
+    try:
+        docs, speakers_list_3 = get_earnings_all_quarters_data(docs, "Q3", ticker, year)
+        earnings_call_quarter_vals.append("Q3")
+    except RetryError:
+        print(f"Don't have the data for Q3")
+        speakers_list_3 = []
 
     print("SEC")
-    section_texts = sec_main(ticker, year)
+    section_texts, sec_form_names = sec_main(ticker, year)
 
     for filings in section_texts:
         texts_dict = filings[-1]
@@ -113,8 +136,8 @@ def create_database(ticker: str, year: int):
     split_docs_qdrant = []
     for doc in split_docs:
         unrolled_dict = {}
-        unrolled_dict['text'] = doc.page_content
-        for k,v in doc.metadata.items():
+        unrolled_dict["text"] = doc.page_content
+        for k, v in doc.metadata.items():
             unrolled_dict[k] = v
 
         split_docs_qdrant.append(unrolled_dict)
@@ -143,4 +166,12 @@ def create_database(ticker: str, year: int):
         ],
     )
 
-    return qdrant_client, encoder, speakers_list_1, speakers_list_2, speakers_list_3
+    return (
+        qdrant_client,
+        encoder,
+        speakers_list_1,
+        speakers_list_2,
+        speakers_list_3,
+        sec_quarter_vals,
+        earnings_call_quarter_vals,
+    )
