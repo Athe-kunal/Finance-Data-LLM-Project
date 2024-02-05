@@ -14,7 +14,7 @@ if ticker != "" and year != "":
         speakers_list_1,
         speakers_list_2,
         speakers_list_3,
-        sec_quarter_vals,
+        sec_form_names,
         earnings_call_quarter_vals
     ) = create_database(ticker=ticker, year=int_year)
     st.write("Created the database")

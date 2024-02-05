@@ -146,7 +146,8 @@ def create_database(ticker: str, year: int):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     encoder = SentenceTransformer(
-        ENCODER_NAME, device=device
+        ENCODER_NAME, device=device,
+        trust_remote_code=True
     )  # or device="cpu" if you don't have a GPU
 
     qdrant_client.recreate_collection(
@@ -172,6 +173,6 @@ def create_database(ticker: str, year: int):
         speakers_list_1,
         speakers_list_2,
         speakers_list_3,
-        sec_quarter_vals,
+        sec_form_names,
         earnings_call_quarter_vals,
     )
