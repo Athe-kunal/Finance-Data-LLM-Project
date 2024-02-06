@@ -1,0 +1,18 @@
+faiss-gpu
+torch==1.13.1
+torchaudio==0.13.1
+torchvision==0.14.1
+# cudatoolkit==11.3
+gcc==9.4.0
+gxx==9.4.0
+bitarray
+datasets
+gitpython
+jupyter
+jupyterlab
+ninja
+scipy
+tqdm
+transformers
+ujson
+python-dotenv

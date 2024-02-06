@@ -70,14 +70,7 @@ def get_earnings_all_quarters_data(docs, quarter: str, ticker: str, year: int):
     return docs, speakers_list
 
 
-def create_database(ticker: str, year: int):
-    """Build the database to query from it
-
-    Args:
-        quarter (str): The quarter of the earnings call
-        ticker (str): The ticker of the company
-        year (int): The year of the earnings call
-    """
+def get_all_docs(ticker: str, year: int):
 
     docs = []
     earnings_call_quarter_vals = []
@@ -123,7 +116,32 @@ def create_database(ticker: str, year: int):
                     },
                 )
             )
+    return (
+        docs,
+        sec_form_names,
+        earnings_call_quarter_vals,
+        speakers_list_1,
+        speakers_list_2,
+        speakers_list_3,
+    )
 
+
+def create_database(ticker: str, year: int):
+    """Build the database to query from it
+
+    Args:
+        quarter (str): The quarter of the earnings call
+        ticker (str): The ticker of the company
+        year (int): The year of the earnings call
+    """
+    (
+        docs,
+        sec_form_names,
+        earnings_call_quarter_vals,
+        speakers_list_1,
+        speakers_list_2,
+        speakers_list_3,
+    ) = get_all_docs(ticker=ticker, year=year)
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
         chunk_overlap=CHUNK_OVERLAP,
@@ -146,8 +164,7 @@ def create_database(ticker: str, year: int):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     encoder = SentenceTransformer(
-        ENCODER_NAME, device=device,
-        trust_remote_code=True
+        ENCODER_NAME, device=device, trust_remote_code=True
     )  # or device="cpu" if you don't have a GPU
 
     qdrant_client.recreate_collection(
