@@ -1,7 +1,7 @@
 CHUNK_SIZE = 512
 CHUNK_OVERLAP = 64
-# ENCODER_NAME = "all-MiniLM-L6-v2"
-ENCODER_NAME = "nomic-ai/nomic-embed-text-v1"
+ENCODER_NAME = "all-MiniLM-L6-v2"
+# ENCODER_NAME = "nomic-ai/nomic-embed-text-v1"
 COLLECTION_NAME = "earnings_call"
 EARNINGS_CALL_RETURN_LIMIT = 3
 SEC_DOCS_RETURN_LIMIT = 3
