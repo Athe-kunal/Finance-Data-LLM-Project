@@ -71,13 +71,6 @@ def get_earnings_all_quarters_data(docs, quarter: str, ticker: str, year: int):
 
 
 def get_all_docs(ticker: str, year: int):
-    """Build the database to query from it
-
-    Args:
-        quarter (str): The quarter of the earnings call
-        ticker (str): The ticker of the company
-        year (int): The year of the earnings call
-    """
 
     docs = []
     earnings_call_quarter_vals = []
@@ -134,6 +127,14 @@ def get_all_docs(ticker: str, year: int):
 
 
 def create_database(ticker: str, year: int):
+    """Build the database to query from it
+
+    Args:
+        quarter (str): The quarter of the earnings call
+        ticker (str): The ticker of the company
+        year (int): The year of the earnings call
+    """
+    
     (
         docs,
         sec_form_names,
