@@ -134,7 +134,6 @@ def create_database(ticker: str, year: int):
         ticker (str): The ticker of the company
         year (int): The year of the earnings call
     """
-    
     (
         docs,
         sec_form_names,
