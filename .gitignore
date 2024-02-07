@@ -2,3 +2,4 @@ __pycache__
 .env
 src/prepline_sec_filings/__pycache__
 experiments
+colbert-env
