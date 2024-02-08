@@ -15,7 +15,7 @@ import unicodedata
 from unstructured.logger import trace_logger
 
 CACHE_MAX_SIZE: Final[int] = 128
-
+nltk.download('punkt')
 
 ENDS_IN_PUNCT_PATTERN = r"[^\w\s]\Z"
 ENDS_IN_PUNCT_RE = re.compile(ENDS_IN_PUNCT_PATTERN)
