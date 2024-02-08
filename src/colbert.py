@@ -31,7 +31,7 @@ def build_index(ticker,year):
     doc_maxlen = DOC_MAXLEN # truncate passages at 300 tokens
     max_id = 10000
     with Run().context(RunConfig(nranks=1, experiment=EXPERIMENT_NAME)):  # nranks specifies the number of GPUs to use
-        config = ColBERTConfig(doc_maxlen=doc_maxlen, nbits=nbits, kmeans_niters=8) # kmeans_niters specifies the number of iterations of k-means clustering; 4 is a good and fast default.
+        config = ColBERTConfig(doc_maxlen=doc_maxlen, nbits=nbits, kmeans_niters=4) # kmeans_niters specifies the number of iterations of k-means clustering; 4 is a good and fast default.
                                                                                     # Consider larger numbers for small datasets.
 
         indexer = Indexer(checkpoint=COLBERT_CHECKPOINT, config=config)
