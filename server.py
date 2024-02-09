@@ -8,7 +8,6 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from src.vectorDatabase import create_database
 from src.queryDatabase import query_database_earnings_call, query_database_sec
-from .settings import QdrantSettings
 import os
 from src.chat_earnings_call import get_openai_answer_earnings_call
 from src.chat_sec import get_openai_answer_sec
