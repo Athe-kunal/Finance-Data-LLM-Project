@@ -52,7 +52,8 @@ def sec_main(
                 datetime_obj = datetime.strptime(report_date, "%Y-%m-%d")
                 quarter = pd.Timestamp(datetime_obj).quarter
                 form_name += str(quarter)
-
+                if form_name in sec_form_names:
+                    form_name+="-1"
             no_dashes_acc_num = re.sub("-", "", acc_num)
             form_lists.append([no_dashes_acc_num, form_name, filing_date, report_date])
             sec_form_names.append(form_name)
