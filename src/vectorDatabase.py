@@ -71,7 +71,6 @@ def get_earnings_all_quarters_data(docs, quarter: str, ticker: str, year: int):
 
 
 def get_all_docs(ticker: str, year: int):
-
     docs = []
     earnings_call_quarter_vals = []
     print("Earnings Call Q1")
