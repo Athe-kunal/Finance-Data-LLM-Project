@@ -80,7 +80,7 @@ def query_database_sec(question: str, qdrant_client, encoder, search_form: str):
         "10-Q1",
         "10-Q2",
         "10-Q3",
-        "10-Q4"
+        "10-Q4",
     ], f'The search form type should be in ["10-K","10-Q1","10-Q2","10-Q3"]'
 
     hits = qdrant_client.search(

@@ -27,11 +27,11 @@ def build_index_name(split_docs):
 def build_index(ticker,year):
     split_docs,sec_form_names,earnings_call_quarter_vals,speakers_list_1,speakers_list_2,speakers_list_3, = get_all_docs(ticker,year)
     texts_dict = build_index_name(split_docs)
-    nbits = 2   # encode each dimension with 2 bits
-    doc_maxlen = 768 # truncate passages at 300 tokens
+    nbits = NBITS   # encode each dimension with 2 bits
+    doc_maxlen = DOC_MAXLEN # truncate passages at 300 tokens
     max_id = 10000
     with Run().context(RunConfig(nranks=1, experiment=EXPERIMENT_NAME)):  # nranks specifies the number of GPUs to use
-        config = ColBERTConfig(doc_maxlen=doc_maxlen, nbits=nbits, kmeans_niters=8) # kmeans_niters specifies the number of iterations of k-means clustering; 4 is a good and fast default.
+        config = ColBERTConfig(doc_maxlen=doc_maxlen, nbits=nbits, kmeans_niters=4) # kmeans_niters specifies the number of iterations of k-means clustering; 4 is a good and fast default.
                                                                                     # Consider larger numbers for small datasets.
 
         indexer = Indexer(checkpoint=COLBERT_CHECKPOINT, config=config)

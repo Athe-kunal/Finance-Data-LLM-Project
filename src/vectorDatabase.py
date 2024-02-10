@@ -160,6 +160,7 @@ def create_database(ticker: str, year: int):
 
         split_docs_qdrant.append(unrolled_dict)
     qdrant_client = QdrantClient("http://localhost:6333")
+    # qdrant_client = QdrantClient(path=f"sec-earnings-call/{ticker}-{year}-db")
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
