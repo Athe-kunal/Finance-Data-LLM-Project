@@ -55,28 +55,32 @@ async def ticker_year(ticker: str, year: int):
         earnings_call_quarter_vals_,
     ) = create_database(ticker=ticker, year=year)
 
-    qdrant_client.set(qdrant_client_)
-    encoder.set(encoder_)
-    speakers_list_1.set(speakers_list_1_)
-    speakers_list_1.set(speakers_list_2_)
-    speakers_list_1.set(speakers_list_3_)
-    sec_form_names.set(sec_form_names_)
-    earnings_call_quarter_vals.set(earnings_call_quarter_vals_)
+    global qdrant_client
+    qdrant_client = qdrant_client_
+    global encoder 
+    encoder = encoder_
+    global speakers_list_1
+    speakers_list_1 = speakers_list_1_
+    global speakers_list_2
+    speakers_list_2 = speakers_list_2_
+    global speakers_list_3
+    speakers_list_3 = speakers_list_3_
+    global sec_form_names
+    sec_form_names =sec_form_names_
+    global earnings_call_quarter_vals
+    earnings_call_quarter_vals = earnings_call_quarter_vals_
 
 
 @app.get("/Earnings/{question}/{quarter}")
 async def earnings_chat(question: str, quarter: str):
-    # qdrant_client = os.environ["QDRANT"]
-    # encoder = os.environ["ENCODER"]
-    qdrant_client_, encoder_ = qdrant_client.get(), encoder.get()
     if quarter == "Q1":
-        speakers_list = speakers_list_1.get()
+        speakers_list = speakers_list_1
     elif quarter == "Q2":
-        speakers_list = speakers_list_2.get()
+        speakers_list = speakers_list_2
     elif quarter == "Q3":
-        speakers_list = speakers_list_3.get()
+        speakers_list = speakers_list_3
     relevant_text = query_database_earnings_call(
-        question, quarter, qdrant_client_, encoder_, speakers_list
+        question, quarter, qdrant_client, encoder, speakers_list
     )
     res = get_openai_answer_earnings_call(question, relevant_text)
 
@@ -86,10 +90,9 @@ async def earnings_chat(question: str, quarter: str):
 @app.get("/SEC/{question}/{doc_name}")
 async def sec_chat(question: str, doc_name: str):
     # qdrant_client,encoder = get_client_encoder()
-    qdrant_client, encoder = qdrant_client.get(), encoder.get()
     # qdrant_client = os.environ["QDRANT"]
     # encoder = os.environ["ENCODER"]
-    sec_form_names = sec_form_names.get()
+    sec_form_names = sec_form_names
     assert (
         doc_name in sec_form_names
     ), f"The document name should be in the list {sec_form_names}"
