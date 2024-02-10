@@ -6,6 +6,7 @@ from nltk import sent_tokenize as _sent_tokenize
 from nltk import word_tokenize as _word_tokenize
 import sys
 from functools import lru_cache
+
 if sys.version_info < (3, 8):
     from typing_extensions import Final  # pragma: no cover
 else:
@@ -15,7 +16,7 @@ import unicodedata
 from unstructured.logger import trace_logger
 
 CACHE_MAX_SIZE: Final[int] = 128
-nltk.download('punkt')
+nltk.download("punkt")
 
 ENDS_IN_PUNCT_PATTERN = r"[^\w\s]\Z"
 ENDS_IN_PUNCT_RE = re.compile(ENDS_IN_PUNCT_PATTERN)
@@ -36,6 +37,7 @@ with open(ENGLISH_WORDS_FILE) as f:
 ADDITIONAL_ENGLISH_WORDS: List[str] = []
 ENGLISH_WORDS: Set[str] = set(BASE_ENGLISH_WORDS + ADDITIONAL_ENGLISH_WORDS)
 
+
 def _download_nltk_package_if_not_present(package_name: str, package_category: str):
     """If the required nlt package is not present, download it."""
     try:
@@ -43,26 +45,35 @@ def _download_nltk_package_if_not_present(package_name: str, package_category: s
     except LookupError:
         nltk.download(package_name)
 
+
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def word_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK word tokenizer with LRU caching enabled."""
-    _download_nltk_package_if_not_present(package_category="tokenizers", package_name="punkt")
+    _download_nltk_package_if_not_present(
+        package_category="tokenizers", package_name="punkt"
+    )
     return _word_tokenize(text)
+
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
 def sent_tokenize(text: str) -> List[str]:
     """A wrapper around the NLTK sentence tokenizer with LRU caching enabled."""
-    _download_nltk_package_if_not_present(package_category="tokenizers", package_name="punkt")
+    _download_nltk_package_if_not_present(
+        package_category="tokenizers", package_name="punkt"
+    )
     return _sent_tokenize(text)
+
 
 tbl = dict.fromkeys(
     i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("P")
 )
 
+
 def remove_punctuation(s: str) -> str:
     """Removes punctuation from a given string."""
     s = s.translate(tbl)
     return s
+
 
 def sentence_count(text: str, min_length: Optional[int] = None) -> int:
     """Checks the sentence count for a section of text. Titles should not be more than one
@@ -90,6 +101,7 @@ def sentence_count(text: str, min_length: Optional[int] = None) -> int:
         count += 1
     return count
 
+
 def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     """Checks if the proportion of non-alpha characters in the text snippet exceeds a given
     threshold. This helps prevent text like "-----------BREAK---------" from being tagged
@@ -110,6 +122,7 @@ def under_non_alpha_ratio(text: str, threshold: float = 0.5):
     total_count = len([char for char in text if char.strip()])
     return ((alpha_count / total_count) < threshold) if total_count > 0 else False
 
+
 def contains_english_word(text: str) -> bool:
     """Checks to see if the text contains an English word."""
     text = text.lower()
@@ -126,6 +139,7 @@ def contains_english_word(text: str) -> bool:
         if len(word) > 1 and word in ENGLISH_WORDS:
             return True
     return False
+
 
 def is_possible_title(
     text: str,

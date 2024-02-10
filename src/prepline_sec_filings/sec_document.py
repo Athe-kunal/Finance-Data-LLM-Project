@@ -22,6 +22,7 @@ from unstructured.documents.elements import (
     Element,
 )
 from unstructured.documents.html import HTMLDocument
+
 # from unstructured.nlp.partition import is_possible_title
 from src.prepline_sec_filings.title import is_possible_title
 from src.prepline_sec_filings.sections import SECSection

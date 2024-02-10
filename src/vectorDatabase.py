@@ -71,7 +71,6 @@ def get_earnings_all_quarters_data(docs, quarter: str, ticker: str, year: int):
 
 
 def get_all_docs(ticker: str, year: int):
-
     docs = []
     earnings_call_quarter_vals = []
     print("Earnings Call Q1")
@@ -96,7 +95,13 @@ def get_all_docs(ticker: str, year: int):
     except RetryError:
         print(f"Don't have the data for Q3")
         speakers_list_3 = []
-
+    print("Earnings Call Q4")
+    try:
+        docs, speakers_list_3 = get_earnings_all_quarters_data(docs, "Q4", ticker, year)
+        earnings_call_quarter_vals.append("Q4")
+    except RetryError:
+        print(f"Don't have the data for Q4")
+        speakers_list_3 = []
     print("SEC")
     section_texts, sec_form_names = sec_main(ticker, year)
 
