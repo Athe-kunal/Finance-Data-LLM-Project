@@ -14,6 +14,7 @@ if ticker != "" and year != "":
         speakers_list_1,
         speakers_list_2,
         speakers_list_3,
+        speakers_list_4,
         sec_form_names,
         earnings_call_quarter_vals,
     ) = create_database(ticker=ticker, year=int_year)
@@ -24,5 +25,6 @@ if ticker != "" and year != "":
     st.session_state["speaker_list_1"] = speakers_list_1
     st.session_state["speaker_list_2"] = speakers_list_2
     st.session_state["speaker_list_3"] = speakers_list_3
+    st.session_state["speaker_list_4"] = speakers_list_4
     st.session_state["sec_form_names"] = sec_form_names
     st.session_state["earnings_call_quarter_vals"] = earnings_call_quarter_vals

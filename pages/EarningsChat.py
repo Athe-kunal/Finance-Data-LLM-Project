@@ -17,6 +17,7 @@ encoder = st.session_state["encoder"]
 speaker_list_1 = st.session_state["speaker_list_1"]
 speakers_list_2 = st.session_state["speaker_list_2"]
 speakers_list_3 = st.session_state["speaker_list_3"]
+speakers_list_4 = st.session_state["speaker_list_4"]
 earnings_call_quarter_vals = st.session_state["earnings_call_quarter_vals"]
 quarter = st.selectbox("Quarter Name", tuple(earnings_call_quarter_vals))
 
@@ -31,6 +32,8 @@ def generate_response(input_text):
         speakers_list = speakers_list_2
     elif quarter == "Q3":
         speakers_list = speakers_list_3
+    elif quarter == "Q4":
+        speakers_list = speakers_list_4
 
     relevant_text = query_database_earnings_call(
         input_text, quarter, qdrant_client, encoder, speakers_list
