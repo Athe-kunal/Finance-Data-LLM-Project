@@ -118,13 +118,12 @@ def query_data(query, name, searcher_dict):
 
 def query_data_all(query: str, searcher, quarter_or_form_name: str, quarter_forms_dict):
     relevant_ids = torch.tensor(quarter_forms_dict[quarter_or_form_name])
+    relevant_ids = relevant_ids.to("cuda:0")
     results = searcher.search(
         query,
-        k=COLBERT_RETURN_LIMIT,
-        filter_fn=torch.tensor(lambda pids: torch.tensor(
-            [pid for pid in pids if pid in relevant_ids]
-        ))
-    )
+        k=2,
+        filter_fn=lambda pids: torch.tensor(
+            [pid for pid in pids if pid in relevant_ids]).to("cuda:0"))
 
     relevant_docs = ""
     for passage_id, _, _ in zip(*results):
