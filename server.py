@@ -12,8 +12,10 @@ from src.chat_sec import get_openai_answer_sec
 from dotenv import load_dotenv
 import openai
 
-load_dotenv()
-
+try:
+    load_dotenv()
+except:
+    pass
 openai.api_key = os.environ["OPENAI_API_KEY"]
 
 app = FastAPI()
