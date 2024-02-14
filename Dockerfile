@@ -8,8 +8,8 @@ RUN pip3 install --upgrade pip
 RUN pip3 --no-cache-dir install -r requirements.txt
 
 WORKDIR /src
-COPY ./src /src
-COPY ./server.py .
+COPY . /src
+# COPY ./server.py .
 
 HEALTHCHECK CMD curl --fail http://localhost:8000/_stcore/health
 
