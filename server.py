@@ -3,19 +3,12 @@
 """
 Give an API request to all the backend requests
 """
-from functools import lru_cache
 from fastapi import FastAPI
-from pydantic_settings import BaseSettings
-from pydantic import BaseModel
 from src.vectorDatabase import create_database
 from src.queryDatabase import query_database_earnings_call, query_database_sec
 import os
 from src.chat_earnings_call import get_openai_answer_earnings_call
 from src.chat_sec import get_openai_answer_sec
-from qdrant_client import QdrantClient
-from sentence_transformers import SentenceTransformer
-from typing import List
-import contextvars
 from dotenv import load_dotenv
 import openai
 
