@@ -13,4 +13,4 @@ COPY . /src
 
 HEALTHCHECK CMD curl --fail http://localhost:8000/_stcore/health
 
-CMD ["uvicorn", "server:app","--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "server:app","--host", "0.0.0.0", "--port", "8000"]
