@@ -42,7 +42,12 @@ def _get_filing(
     # headers = {
     # 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     # }
-    headers = {"User-Agent": "Mozilla/5.0"}
+    company = "Indiana-University-Bloomington"
+    email = "athecolab@gmail.com"
+    headers = {
+        "User-Agent": f"{company} {email}",
+        "Content-Type": "text/html",
+    }
     response = session.get(url, headers=headers)
     response.raise_for_status()
     return response.text
@@ -66,11 +71,11 @@ def get_cik_by_ticker(ticker: str) -> str:
     # # Add more headers as needed
     # }
     company = "Indiana-University-Bloomington"
-    email = "athekunal@gmail.com"
+    email = "athecolab@gmail.com"
     headers = {
-            "User-Agent": f"{company} {email}",
-            "Content-Type": "text/html",
-        }
+        "User-Agent": f"{company} {email}",
+        "Content-Type": "text/html",
+    }
     response = requests.get(url, stream=True, headers=headers)
     # response = requests.get(url, headers=headers)
     # response = requests.get(url)
@@ -238,7 +243,8 @@ def _drop_dashes(accession_number: Union[str, int]) -> str:
 
 
 def _get_session(
-    company: Optional[str] = None, email: Optional[str] = None
+    company: Optional[str] = "Indiana-University-Bloomington",
+    email: Optional[str] = "athecolab@gmail.com",
 ) -> requests.Session:
     """Creates a requests sessions with the appropriate headers set. If these headers are not
     set, SEC will reject your request.

@@ -13,7 +13,8 @@ from tqdm.notebook import tqdm
 import torch
 from qdrant_client import models, QdrantClient
 from qdrant_client.models import VectorParams, Distance
-# from qdrant_client.local import 
+
+# from qdrant_client.local import
 import os
 import json
 from src.secData import sec_main
@@ -136,9 +137,7 @@ def create_database(ticker: str, year: int):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     encoder = SentenceTransformer(
-        ENCODER_NAME,
-        device=device,
-        trust_remote_code=True
+        ENCODER_NAME, device=device, trust_remote_code=True
     )  # or device="cpu" if you don't have a GPU
 
     if os.path.exists(database_folder):

@@ -6,8 +6,8 @@ year = st.text_input(label="Year")
 
 if year != "":
     int_year = int(float(year))
-
-if ticker != "" and year != "":
+submit_button = st.button(label="Submit")
+if ticker != "" and year != "" and submit_button:
     (
         qdrant_client,
         encoder,

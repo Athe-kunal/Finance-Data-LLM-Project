@@ -9,8 +9,10 @@ RUN pip3 --no-cache-dir install -r requirements.txt
 
 WORKDIR /src
 COPY . /src
-# COPY ./server.py .
+EXPOSE 8501
 
-HEALTHCHECK CMD curl --fail http://localhost:8000/_stcore/health
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-ENTRYPOINT ["uvicorn", "server:app","--host", "0.0.0.0", "--port", "8000"]
+# ENTRYPOINT ["uvicorn", "server:app","--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT [ "streamlit", "run" ]
+CMD [ "Intro.py", "--server.fileWatcherType", "none", "--browser.gatherUsageStats", "false", "--server.address", "0.0.0.0"]
