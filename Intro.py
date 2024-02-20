@@ -10,6 +10,10 @@ if year != "":
     int_year = int(float(year))
 submit_button = st.button(label="Submit")
 if ticker != "" and year != "" and submit_button:
+    if curr_year == int_year:
+        curr_year_bool = True
+    else:
+        curr_year_bool = False
     (
         qdrant_client,
         encoder,
@@ -19,9 +23,11 @@ if ticker != "" and year != "" and submit_button:
         speakers_list_4,
         sec_form_names,
         earnings_call_quarter_vals,
-    ) = create_database(ticker=ticker, year=int_year)
+    ) = create_database(ticker=ticker, year=int_year,curr_year_bool=curr_year_bool)
     st.write("Created the database")
 
+    st.session_state['ticker'] = ticker
+    st.session_state['year'] = str(year)
     st.session_state["qdrant_client"] = qdrant_client
     st.session_state["encoder"] = encoder
     st.session_state["speaker_list_1"] = speakers_list_1

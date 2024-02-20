@@ -22,8 +22,10 @@ earnings_call_quarter_vals = st.session_state["earnings_call_quarter_vals"]
 quarter = st.selectbox("Quarter Name", tuple(earnings_call_quarter_vals))
 
 st.session_state["quarter"] = quarter
+ticker = st.session_state['ticker']
+year = st.session_state['year']
 
-
+st.title(f"{ticker}-{year}")
 def generate_response(input_text):
     quarter = st.session_state["quarter"]
     if quarter == "Q1":

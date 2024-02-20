@@ -125,7 +125,7 @@ def get_all_docs(ticker: str, year: int):
     )
 
 
-def create_database(ticker: str, year: int,curr_year:bool=False):
+def create_database(ticker: str, year: int,curr_year_bool:bool=False):
     """Build the database to query from it
 
     Args:
@@ -140,7 +140,7 @@ def create_database(ticker: str, year: int,curr_year:bool=False):
         ENCODER_NAME, device=device, trust_remote_code=True
     )  # or device="cpu" if you don't have a GPU
 
-    if os.path.exists(database_folder) and not curr_year:
+    if os.path.exists(database_folder) and not curr_year_bool:
         with open(
             os.path.join(database_folder, "application_metadata.json"), "r"
         ) as openfile:
@@ -199,7 +199,7 @@ def create_database(ticker: str, year: int,curr_year:bool=False):
     # qdrant_client = QdrantClient("http://localhost:6333")
     qdrant_client = QdrantClient(path=database_folder)
 
-    if curr_year:
+    if curr_year_bool:
         qdrant_client.recreate_collection(
         collection_name=COLLECTION_NAME,
         vectors_config=VectorParams(
