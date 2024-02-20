@@ -1,6 +1,8 @@
 import streamlit as st
 from src.vectorDatabase import create_database
+from datetime import datetime
 
+curr_year = datetime.now().year
 ticker = st.text_input(label="Ticker")
 year = st.text_input(label="Year")
 

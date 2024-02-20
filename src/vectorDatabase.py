@@ -125,13 +125,13 @@ def get_all_docs(ticker: str, year: int):
     )
 
 
-def create_database(ticker: str, year: int):
+def create_database(ticker: str, year: int,curr_year:bool=False):
     """Build the database to query from it
 
     Args:
-        quarter (str): The quarter of the earnings call
         ticker (str): The ticker of the company
         year (int): The year of the earnings call
+        curr_year (bool): If current year or not
     """
     database_folder = f"{DATABASE_FOLDER}/{ticker}-{year}-db"
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -140,7 +140,7 @@ def create_database(ticker: str, year: int):
         ENCODER_NAME, device=device, trust_remote_code=True
     )  # or device="cpu" if you don't have a GPU
 
-    if os.path.exists(database_folder):
+    if os.path.exists(database_folder) and not curr_year:
         with open(
             os.path.join(database_folder, "application_metadata.json"), "r"
         ) as openfile:
@@ -199,12 +199,20 @@ def create_database(ticker: str, year: int):
     # qdrant_client = QdrantClient("http://localhost:6333")
     qdrant_client = QdrantClient(path=database_folder)
 
-    qdrant_client.create_collection(
+    if curr_year:
+        qdrant_client.recreate_collection(
         collection_name=COLLECTION_NAME,
         vectors_config=VectorParams(
             size=encoder.get_sentence_embedding_dimension(), distance=Distance.COSINE
         ),
     )
+    else:
+        qdrant_client.create_collection(
+            collection_name=COLLECTION_NAME,
+            vectors_config=VectorParams(
+                size=encoder.get_sentence_embedding_dimension(), distance=Distance.COSINE
+            ),
+        )
 
     qdrant_client.upload_records(
         collection_name=COLLECTION_NAME,
