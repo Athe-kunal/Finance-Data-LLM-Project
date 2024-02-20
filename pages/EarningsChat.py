@@ -1,6 +1,6 @@
 from src.chat_earnings_call import get_openai_answer_earnings_call
 from src.queryDatabase import query_database_earnings_call
-
+from streamlit_feedback import streamlit_feedback
 import streamlit as st
 from dotenv import load_dotenv
 import openai
@@ -69,5 +69,10 @@ if st.session_state.messages[-1]["role"] != "assistant":
             st.write(docs)
             expander = st.expander("See relevant sources")
             expander.write(relevant_text)
+            feedback = streamlit_feedback(
+                feedback_type="thumbs",
+                optional_text_label = "Please describe the feedback in detail"
+            )
+            # print(feedback)
     message = {"role": "assistant", "content": docs}
     st.session_state.messages.append(message)
