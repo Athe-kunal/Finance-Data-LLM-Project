@@ -16,10 +16,11 @@ encoder = st.session_state["encoder"]
 sec_form_names = st.session_state["sec_form_names"]
 form_name = st.selectbox("Form Name", tuple(sec_form_names))
 st.session_state["form_name"] = form_name
-ticker = st.session_state['ticker']
-year = st.session_state['year']
+ticker = st.session_state["ticker"]
+year = st.session_state["year"]
 
 st.title(f"{ticker}-{year}")
+
 
 def generate_response(input_text):
     form = st.session_state["form_name"]
@@ -57,7 +58,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
             expander.write(relevant_text)
             feedback = streamlit_feedback(
                 feedback_type="thumbs",
-                optional_text_label = "Please describe the feedback in detail"
+                optional_text_label="Please describe the feedback in detail",
             )
     message = {"role": "assistant", "content": docs}
     st.session_state.messages.append(message)

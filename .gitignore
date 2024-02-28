@@ -5,3 +5,4 @@ src/prepline_sec_filings/__pycache__
 experiments
 colbert-env
 sec-earnings-call
+sec-earnings-call-openai

@@ -10,4 +10,5 @@ DOC_MAXLEN = 300
 NBITS = 2
 EXPERIMENT_NAME = "SEC_EARNINGS"
 COLBERT_RETURN_LIMIT = 3
-DATABASE_FOLDER = "sec-earnings-call"
+DATABASE_FOLDER = "sec-earnings-call-openai"
+OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"

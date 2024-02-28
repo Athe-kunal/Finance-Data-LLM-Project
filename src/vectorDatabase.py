@@ -13,12 +13,16 @@ from tqdm.notebook import tqdm
 import torch
 from qdrant_client import models, QdrantClient
 from qdrant_client.models import VectorParams, Distance
+import openai
 
 # from qdrant_client.local import
 import os
 import json
 from src.secData import sec_main
 from tenacity import RetryError
+from dotenv import load_dotenv
+
+load_dotenv("../.env")
 
 
 def clean_speakers(speaker):
@@ -125,7 +129,7 @@ def get_all_docs(ticker: str, year: int):
     )
 
 
-def create_database(ticker: str, year: int,curr_year_bool:bool=False):
+def create_database(ticker: str, year: int, curr_year_bool: bool = False):
     """Build the database to query from it
 
     Args:
@@ -139,7 +143,7 @@ def create_database(ticker: str, year: int,curr_year_bool:bool=False):
     encoder = SentenceTransformer(
         ENCODER_NAME, device=device, trust_remote_code=True
     )  # or device="cpu" if you don't have a GPU
-
+    openai_client = openai.Client(api_key=os.environ["OPENAI_API_KEY"])
     if os.path.exists(database_folder) and not curr_year_bool:
         with open(
             os.path.join(database_folder, "application_metadata.json"), "r"
@@ -201,16 +205,20 @@ def create_database(ticker: str, year: int,curr_year_bool:bool=False):
 
     if curr_year_bool:
         qdrant_client.recreate_collection(
-        collection_name=COLLECTION_NAME,
-        vectors_config=VectorParams(
-            size=encoder.get_sentence_embedding_dimension(), distance=Distance.COSINE
-        ),
-    )
+            collection_name=COLLECTION_NAME,
+            vectors_config=VectorParams(
+                # size=encoder.get_sentence_embedding_dimension(), distance=Distance.COSINE
+                size=1536,
+                distance=Distance.COSINE,
+            ),
+        )
     else:
         qdrant_client.create_collection(
             collection_name=COLLECTION_NAME,
             vectors_config=VectorParams(
-                size=encoder.get_sentence_embedding_dimension(), distance=Distance.COSINE
+                # size=encoder.get_sentence_embedding_dimension(), distance=Distance.COSINE
+                size=1536,
+                distance=Distance.COSINE,
             ),
         )
 
@@ -218,7 +226,14 @@ def create_database(ticker: str, year: int,curr_year_bool:bool=False):
         collection_name=COLLECTION_NAME,
         records=[
             models.Record(
-                id=idx, vector=encoder.encode(doc["text"]).tolist(), payload=doc
+                # id=idx, vector=encoder.encode(doc["text"]).tolist(), payload=doc
+                id=idx,
+                vector=openai_client.embeddings.create(
+                    input=doc["text"], model=OPENAI_EMBEDDING_MODEL
+                )
+                .data[0]
+                .embedding,
+                payload=doc,
             )
             for idx, doc in enumerate(split_docs_qdrant)
         ],

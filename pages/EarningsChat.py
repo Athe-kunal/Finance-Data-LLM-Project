@@ -22,10 +22,12 @@ earnings_call_quarter_vals = st.session_state["earnings_call_quarter_vals"]
 quarter = st.selectbox("Quarter Name", tuple(earnings_call_quarter_vals))
 
 st.session_state["quarter"] = quarter
-ticker = st.session_state['ticker']
-year = st.session_state['year']
+ticker = st.session_state["ticker"]
+year = st.session_state["year"]
 
 st.title(f"{ticker}-{year}")
+
+
 def generate_response(input_text):
     quarter = st.session_state["quarter"]
     if quarter == "Q1":
@@ -71,7 +73,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
             expander.write(relevant_text)
             feedback = streamlit_feedback(
                 feedback_type="thumbs",
-                optional_text_label = "Please describe the feedback in detail"
+                optional_text_label="Please describe the feedback in detail",
             )
             # print(feedback)
     message = {"role": "assistant", "content": docs}
