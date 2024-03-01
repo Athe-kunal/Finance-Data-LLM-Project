@@ -128,7 +128,7 @@ def query_data_all(query: str, searcher, quarter_or_form_name: str, quarter_form
     # relevant_ids = torch.tensor(quarter_forms_dict[quarter_or_form_name])
     required_quarter_form_dict = quarter_forms_dict[quarter_or_form_name]
     relevant_ids = torch.tensor([int(i) for i in required_quarter_form_dict.keys()]).to("cuda:0")
-    print(relevant_ids.dtype,relevant_ids)
+    # print(relevant_ids.dtype,relevant_ids)
     results = searcher.search(
         query,
         k=COLBERT_RETURN_LIMIT,
@@ -149,13 +149,13 @@ def query_data_all(query: str, searcher, quarter_or_form_name: str, quarter_form
         relevant_docs+=text + "\n\n"
     elif quarter_or_form_name.startswith("10"):
       section_dict = {}
-      print(*results)
+    #   print(*results)
       for passage_id, _, _ in zip(*results):
         print(passage_id,searcher.collection[passage_id])
         metadata = required_quarter_form_dict[str(passage_id)]
         section = metadata['sectionName']
-        if section not in section_dict: section_dict[speaker]=""
-        section_dict[speaker]+=searcher.collection[passage_id]
+        if section not in section_dict: section_dict[section]=""
+        section_dict[section]+=searcher.collection[passage_id]
       for section,text in section_dict.items():
         relevant_docs+=section+": "
         relevant_docs+=text + "\n\n"
