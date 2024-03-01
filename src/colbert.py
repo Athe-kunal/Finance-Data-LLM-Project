@@ -9,6 +9,7 @@ from src.config import *
 import os
 from functools import lru_cache
 import torch
+from langchain.text_splitter import CharacterTextSplitter,RecursiveCharacterTextSplitter
 
 os.environ["COLBERT_LOAD_TORCH_EXTENSION_VERBOSE"] = "True"
 
@@ -66,9 +67,16 @@ def build_index_all(ticker, year):
     docs, sec_form_names, earnings_call_quarter_vals, _, _, _ = get_all_docs(
         ticker, year
     )
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=COLBERT_CHUNK_SIZE,
+        chunk_overlap=COLBERT_CHUNK_OVERLAP,
+        length_function=len,
+        # is_separator_regex = False,
+    )
+    split_docs = text_splitter.split_documents(docs)
     quarter_forms_dict = {k: {} for k in sec_form_names + earnings_call_quarter_vals}
     sentences = []
-    for idx, doc in enumerate(docs):
+    for idx, doc in enumerate(split_docs):
         if doc.page_content == "":
             continue
         doc_metadata = doc.metadata
@@ -146,8 +154,8 @@ def query_data_all(query: str, searcher, quarter_or_form_name: str, quarter_form
         print(passage_id,searcher.collection[passage_id])
         metadata = required_quarter_form_dict[str(passage_id)]
         section = metadata['sectionName']
-        if section not in section_dict: section_dict[section]=""
-        section_dict[section]+=searcher.collection[passage_id]
+        if section not in section_dict: section_dict[speaker]=""
+        section_dict[speaker]+=searcher.collection[passage_id]
       for section,text in section_dict.items():
         relevant_docs+=section+": "
         relevant_docs+=text + "\n\n"
