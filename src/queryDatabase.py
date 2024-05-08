@@ -25,12 +25,12 @@ def query_database_earnings_call(
 
     hits = qdrant_client.search(
         collection_name=COLLECTION_NAME,
-        # query_vector=encoder.encode(question).tolist(),
-        query_vector=encoder.embeddings.create(
-            input=question, model=OPENAI_EMBEDDING_MODEL
-        )
-        .data[0]
-        .embedding,
+        query_vector=encoder.encode(question).tolist(),
+        # query_vector=encoder.embeddings.create(
+        #     input=question, model=OPENAI_EMBEDDING_MODEL
+        # )
+        # .data[0]
+        # .embedding,
         limit=EARNINGS_CALL_RETURN_LIMIT,
         # query_filter=models.Filter(
         #     must=[
@@ -90,12 +90,12 @@ def query_database_sec(question: str, qdrant_client, encoder, search_form: str):
 
     hits = qdrant_client.search(
         collection_name=COLLECTION_NAME,
-        # query_vector=encoder.encode(question).tolist(),
-        query_vector=encoder.embeddings.create(
-            input=question, model=OPENAI_EMBEDDING_MODEL
-        )
-        .data[0]
-        .embedding,
+        query_vector=encoder.encode(question).tolist(),
+        # query_vector=encoder.embeddings.create(
+        #     input=question, model=OPENAI_EMBEDDING_MODEL
+        # )
+        # .data[0]
+        # .embedding,
         limit=SEC_DOCS_RETURN_LIMIT,
         query_filter=models.Filter(
             must=[

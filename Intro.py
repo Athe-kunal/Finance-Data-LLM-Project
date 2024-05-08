@@ -1,5 +1,5 @@
 import streamlit as st
-from src.vectorDatabase import create_database
+from src.vectorDatabaseDocker import create_database
 from datetime import datetime
 
 curr_year = datetime.now().year
@@ -23,7 +23,7 @@ if ticker != "" and year != "" and submit_button:
         speakers_list_4,
         sec_form_names,
         earnings_call_quarter_vals,
-    ) = create_database(ticker=ticker, year=int_year, curr_year_bool=curr_year_bool)
+    ) = create_database(ticker=ticker, year=int_year)
     st.write("Created the database")
 
     st.session_state["ticker"] = ticker
