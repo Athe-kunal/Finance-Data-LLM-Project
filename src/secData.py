@@ -17,7 +17,7 @@ def sec_main(
     include_amends=True,
 ):
     cik = get_cik_by_ticker(ticker)
-    rgld_cik = int(cik.strip("0"))
+    rgld_cik = int(cik.lstrip("0"))
 
     forms = []
     if include_amends:
